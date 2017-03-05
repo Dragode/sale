@@ -7,7 +7,8 @@ import App from './App'
 import Home from './components/Dispatcher'
 import AddGoods from './components/AddGoods.vue'
 
-Vue.use(VueRouter)
+
+Vue.use(VueRouter);
 
 const routes = [
   {

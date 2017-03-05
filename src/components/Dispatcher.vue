@@ -5,10 +5,10 @@
       <h1> </h1>
     </div>
     <group>
-      <cell title="新增拍品" is-link link="/addGoods"></cell>
-      <cell title="订单管理" is-link></cell>
-      <cell title="会员管理" is-link></cell>
-    </group>
+                  <cell title="新增拍品" is-link link="/addGoods"></cell>
+                  <cell title="订单管理" is-link></cell>
+                  <cell title="会员管理" is-link></cell>
+                </group>
   </div>
 </template>
 
