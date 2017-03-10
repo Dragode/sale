@@ -5,15 +5,15 @@
 
       <x-button type="primary" @click.native="uploadPicture(1,'banner')">上传封面图片</x-button>
       <divider>{{uploadBannerLabel}}</divider>
-      <x-input title="标题" v-model="title"></x-input>
-      <x-input title="起拍价" v-model="startingPrice"></x-input>
-      <x-input title="加价幅度" v-model="bidIncrement"></x-input>
-      <x-input title="保证金（0不用保证金）" v-model="cashDeposit"></x-input>
-      <x-input title="延迟周期(分钟)" v-model="delayCycle"></x-input>
-      <datetime v-model="startTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖开始时间'"
+      <x-input title="标题" v-model="goods.title"></x-input>
+      <x-input title="起拍价" v-model="goods.startingPrice"></x-input>
+      <x-input title="加价幅度" v-model="goods.bidIncrement"></x-input>
+      <x-input title="保证金（0不用保证金）" v-model="goods.cashDeposit"></x-input>
+      <x-input title="延迟周期(分钟)" v-model="goods.delayCycle"></x-input>
+      <datetime v-model="goods.startTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖开始时间'"
                 year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
                 confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('start')"></datetime>
-      <datetime v-model="endTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖结束时间'"
+      <datetime v-model="goods.endTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖结束时间'"
                 year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
                 confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('end')"></datetime>
       <divider></divider>
@@ -54,6 +54,20 @@
 
     var wxReady = false;
 
+    var goods = {
+      bannerPictureWxServerId:'',
+      title:'拍品标题',
+      startingPrice:0,
+      bidIncrement:0,
+      cashDeposit:0,
+      delayCycle:0,
+      startTime:'',
+      endTime:'',
+      auctionPictureWxServerId:'',
+      showPicturesWxServerId:[],
+      descPicturesWxServerId:[]
+    };
+
     //TODO 抽取上传图片服务
     //上传图片到微信服务器
     var serverIds = [];
@@ -83,25 +97,27 @@
     function savePicture(){
       alert("globalPictureUsage="+globalPictureUsage);
       if("banner" == globalPictureUsage){
-        bannerPictureWxServerId = serverIds[0];
+        goods.bannerPictureWxServerId = serverIds[0];
         uploadBannerLabel = '已上传封面图片';
       }
 
       if("auction" == globalPictureUsage){
-        auctionPictureWxServerId = serverIds[0];
+        goods.auctionPictureWxServerId = serverIds[0];
         uploadAuctionLabel = '已上传竞拍大厅图片';
       }
 
       if("show" == globalPictureUsage){
-        showPicturesWxServerId.concat(serverIds);
+        goods.showPicturesWxServerId.concat(serverIds);
         uploadShowLabel = '已上传' + showPicturesWxServerId.length + '张商品详情页顶部图片';
       }
 
       if("desc" == globalPictureUsage){
-        descPicturesWxServerId.concat(serverIds);
+        goods.descPicturesWxServerId.concat(serverIds);
         uploadDescLabel = '已上传' + descPicturesWxServerId.length + '张上传商品详情页详情图片';
       }
     }
+
+
 
     export default{
         components: {
@@ -142,17 +158,7 @@
         },
         data(){
             return{
-                bannerPictureWxServerId:'',
-                title:'拍品标题',
-                startingPrice:0,
-                bidIncrement:0,
-                cashDeposit:0,
-                delayCycle:0,
-                startTime:'',
-                endTime:'',
-                auctionPictureWxServerId:'',
-                showPicturesWxServerId:[],
-                descPicturesWxServerId:[],
+                goods:goods,
                 uploadBannerLabel:'请上传封面图片',
                 uploadAuctionLabel:'请上传竞拍大厅图片',
                 uploadShowLabel:'请上传商品详情页顶部图片',
@@ -183,28 +189,15 @@
           setNow (timeType) {
             //TODO refactor
             if('start' == timeType){
-              this.startTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
+              this.goods.startTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
             }
             if('end' == timeType){
-              this.endTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
+              this.goods.endTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
             }
           },
           submitGoods(){
             this.showSubmitLoading = true;
-            var newGoods = {
-              bannerPictureWxServerId : this.bannerPictureWxServerId,
-              title : this.title,
-              startingPrice : this.startingPrice,
-              bidIncrement : this.bidIncrement,
-              cashDeposit:this.cashDeposit,
-              delayCycle:this.delayCycle,
-              startTime:this.startTime,
-              endTime:this.endTime,
-              auctionPictureWxServerId:this.auctionPictureWxServerId,
-              showPicturesWxServerId:this.showPicturesWxServerId,
-              descPicturesWxServerId:this.descPicturesWxServerId
-            }
-            this.$http.post("/goods",newGoods).then(
+            this.$http.post("/goods",goods).then(
               function(response){
                 this.showSubmitLoading = false;
                 this.showSubmitSuccessTip = true;
