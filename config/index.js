@@ -30,6 +30,9 @@ module.exports = {
     proxyTable: {
       "/wx/jssdk/config":{
         target:"http://localhost:8080"
+      },
+      "/goods":{
+        target:"http://localhost:8080"
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
