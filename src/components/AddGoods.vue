@@ -5,13 +5,17 @@
 
       <x-button type="primary" @click.native="uploadPicture(1,'banner')">上传封面图片</x-button>
       <divider>{{uploadBannerLabel}}</divider>
-      <x-input title="标题" v-model="title" ></x-input>
-      <x-input title="起拍价" v-model="startingPrice" ></x-input>
-      <x-input title="加价幅度" v-model="bidIncrement" ></x-input>
-      <x-input title="保证金（0不用保证金）" v-model="cashDeposit" ></x-input>
-      <x-input title="延迟周期(分钟)" v-model="delayCycle" ></x-input>
-      <datetime v-model="startTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm" :title="'拍卖开始时间'" year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分" confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('start')"></datetime>
-      <datetime v-model="endTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm" :title="'拍卖结束时间'" year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分" confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('end')"></datetime>
+      <x-input title="标题" v-model="title"></x-input>
+      <x-input title="起拍价" v-model="startingPrice"></x-input>
+      <x-input title="加价幅度" v-model="bidIncrement"></x-input>
+      <x-input title="保证金（0不用保证金）" v-model="cashDeposit"></x-input>
+      <x-input title="延迟周期(分钟)" v-model="delayCycle"></x-input>
+      <datetime v-model="startTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖开始时间'"
+                year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
+                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('start')"></datetime>
+      <datetime v-model="endTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖结束时间'"
+                year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
+                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('end')"></datetime>
       <divider></divider>
       <x-button type="primary" @click.native="uploadPicture(1,'auction')">上传竞拍大厅图片</x-button>
       <divider>{{uploadAuctionLabel}}</divider>
@@ -64,6 +68,7 @@
               serverIds.push(res.serverId);
               currentUploadPictureIndex++;
               if(currentUploadPictureIndex >= choosePictureIds.length){
+                currentUploadPictureIndex = 0;
                 savePicture();
               }else{
                 uploadChoosePictures();
@@ -74,24 +79,25 @@
 
     //TODO refactor
     //保存微信服务器图片ID到要提交的变量
-    var pictureUsage = "";
+    var globalPictureUsage = "";
     function savePicture(){
-      if("banner" == pictureUsage){
+      alert("globalPictureUsage="+globalPictureUsage);
+      if("banner" == globalPictureUsage){
         bannerPictureWxServerId = serverIds[0];
         uploadBannerLabel = '已上传封面图片';
       }
 
-      if("auction" == pictureUsage){
+      if("auction" == globalPictureUsage){
         auctionPictureWxServerId = serverIds[0];
         uploadAuctionLabel = '已上传竞拍大厅图片';
       }
 
-      if("show" == pictureUsage){
+      if("show" == globalPictureUsage){
         showPicturesWxServerId.concat(serverIds);
         uploadShowLabel = '已上传' + showPicturesWxServerId.length + '张商品详情页顶部图片';
       }
 
-      if("desc" == pictureUsage){
+      if("desc" == globalPictureUsage){
         descPicturesWxServerId.concat(serverIds);
         uploadDescLabel = '已上传' + descPicturesWxServerId.length + '张上传商品详情页详情图片';
       }
@@ -163,6 +169,7 @@
               alert("还没准备好")
               return
             }
+            globalPictureUsage = pictureUsage;
             wx.chooseImage({
                 count: count, // 默认9
                 //sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
@@ -176,10 +183,10 @@
           setNow (timeType) {
             //TODO refactor
             if('start' == timeType){
-              this.startTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm');
+              this.startTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
             }
             if('end' == timeType){
-              this.endTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm');
+              this.endTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
             }
           },
           submitGoods(){
@@ -213,6 +220,7 @@
           }
         }
     }
+
 </script>
 
 <style>
