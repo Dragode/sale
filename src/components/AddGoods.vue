@@ -3,8 +3,8 @@
     <divider>上传拍品</divider>
     <box gap="10px 10px">
 
-      <x-button type="primary" @click.native="uploadPicture(1,'banner')">上传封面图片</x-button>
-      <divider>{{uploadBannerLabel}}</divider>
+      <x-button type="primary" @click.native="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
+      <divider></divider>
       <x-input title="标题" v-model="goods.title"></x-input>
       <x-input title="起拍价" v-model="goods.startingPrice"></x-input>
       <x-input title="加价幅度" v-model="goods.bidIncrement"></x-input>
@@ -12,13 +12,13 @@
       <x-input title="延迟周期(分钟)" v-model="goods.delayCycle"></x-input>
       <datetime v-model="goods.startTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖开始时间'"
                 year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
-                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('start')"></datetime>
+                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow(goods.startTime)"></datetime>
       <datetime v-model="goods.endTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖结束时间'"
                 year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
-                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow('end')"></datetime>
+                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow(goods.startTime)"></datetime>
       <divider></divider>
-      <x-button type="primary" @click.native="uploadPicture(1,'auction')">上传竞拍大厅图片</x-button>
-      <divider>{{uploadAuctionLabel}}</divider>
+      <x-button type="primary" @click.native="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
+      <divider></divider>
       <x-button type="primary" @click.native="uploadPicture(9,'show')">上传商品详情页顶部图片</x-button>
       <divider>{{uploadShowLabel}}</divider>
       <x-button type="primary" @click.native="uploadPicture(9,'desc')">上传商品详情页详情图片</x-button>
@@ -40,7 +40,9 @@
         <p style="text-align:center;">确认上传拍品？</p>
       </confirm>
 
+      <loading v-model="showWxJsSdkLoading" :text="'正在初始化'"></loading>
       <loading v-model="showSubmitLoading" :text="'正在新增拍品'"></loading>
+      <loading v-model="showUploadPictureLoading" :text="'正在上传图片'"></loading>
       <alert v-model="showSubmitSuccessTip" :title="'提示'">新增拍品成功</alert>
       <alert v-model="showSubmitFailTip" :title="'提示'">新增拍品失败</alert>
     </box>
@@ -49,10 +51,19 @@
 
 <script>
     import { Box, XButton ,XInput , Divider , Flexbox , FlexboxItem , Datetime , Confirm , Loading , Alert , dateFormat } from 'vux'
-
+    import Vue from 'vue'
+    import  { AlertPlugin } from 'vux'
+    Vue.use(AlertPlugin);
+    import  { ConfirmPlugin } from 'vux'
+    Vue.use(ConfirmPlugin);
     const wx = require('weixin-js-sdk')
 
-    var wxReady = false;
+    var showWxJsSdkLoading = true;
+    var showUploadPictureLoading =false;
+    var uploadBannerButtonLabel = '上传封面图片';
+    var uploadAuctionButtonLabel = '上传竞拍大厅图片';
+    var uploadShowLabel = '已上传0张商品详情页顶部图片';
+    var uploadDescLabel = '已上传0张商品详情页详情图片';
 
     var goods = {
       bannerPictureWxServerId:'',
@@ -82,7 +93,7 @@
               serverIds.push(res.serverId);
               currentUploadPictureIndex++;
               if(currentUploadPictureIndex >= choosePictureIds.length){
-                currentUploadPictureIndex = 0;
+                showUploadPictureLoading = false;
                 savePicture();
               }else{
                 uploadChoosePictures();
@@ -91,129 +102,146 @@
       });
     }
 
-    //TODO refactor
     //保存微信服务器图片ID到要提交的变量
     var globalPictureUsage = "";
     function savePicture(){
-      alert("globalPictureUsage="+globalPictureUsage);
       if("banner" == globalPictureUsage){
         goods.bannerPictureWxServerId = serverIds[0];
-        uploadBannerLabel = '已上传封面图片';
+        uploadBannerButtonLabel = '重新上传封面图片';
       }
 
       if("auction" == globalPictureUsage){
         goods.auctionPictureWxServerId = serverIds[0];
-        uploadAuctionLabel = '已上传竞拍大厅图片';
+        uploadAuctionButtonLabel = '重新上传竞拍大厅图片';
       }
 
       if("show" == globalPictureUsage){
-        goods.showPicturesWxServerId.concat(serverIds);
-        uploadShowLabel = '已上传' + showPicturesWxServerId.length + '张商品详情页顶部图片';
+        goods.showPicturesWxServerId = goods.showPicturesWxServerId.concat(serverIds);
+        uploadShowLabel = '已上传' + goods.showPicturesWxServerId.length + '张商品详情页顶部图片';
       }
 
       if("desc" == globalPictureUsage){
-        goods.descPicturesWxServerId.concat(serverIds);
-        uploadDescLabel = '已上传' + descPicturesWxServerId.length + '张上传商品详情页详情图片';
+        goods.descPicturesWxServerId = goods.descPicturesWxServerId.concat(serverIds);
+        uploadDescLabel = '已上传' + goods.descPicturesWxServerId.length + '张上传商品详情页详情图片';
       }
     }
 
-
-
-    export default{
-        components: {
-          Box,
-          XInput,
-          XButton,
-          Divider,
-          Flexbox,
-          FlexboxItem,
-          Datetime,
-          Confirm,
-          Loading,
-          Alert
-        },
-        mounted:function(){
-          this.$http.get('/wx/jssdk/config').then(
-          	function(response){
-          		var data = response.body;
-          		var config = {
-          			appId : data.appId,
-          			timestamp : data.timestamp,
-          			nonceStr : data.nonceStr,
-          			signature : data.signature,
-          			jsApiList : ["chooseImage","uploadImage"]
-          		};
-          		wx.config(config);
-          		wx.ready(function(){
-          			wxReady = true;
-          		})
-          		wx.error(function(res){
-          			alert("error info:"+res)
-          		})
-          	}
-          	,
-          	function(){
-          		console.log("error")
-          	});
-        },
-        data(){
-            return{
-                goods:goods,
-                uploadBannerLabel:'请上传封面图片',
-                uploadAuctionLabel:'请上传竞拍大厅图片',
-                uploadShowLabel:'请上传商品详情页顶部图片',
-                uploadDescLabel:'请上传商品详情页详情图片',
-                showSubmitConfirm:false,
-                showSubmitLoading:false,
-                showSubmitSuccessTip:false,
-                showSubmitFailTip:false
-            }
-        },
-        methods:{
-          uploadPicture(count,pictureUsage){
-            if(!wxReady){
-              alert("还没准备好")
-              return
-            }
-            globalPictureUsage = pictureUsage;
-            wx.chooseImage({
-                count: count, // 默认9
-                //sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-                //sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-                success: function (res) {
-                    choosePictureIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-                    uploadChoosePictures();
-                }
+    var AddGoodsComponent = {
+      components: {
+        Box,
+        XInput,
+        XButton,
+        Divider,
+        Flexbox,
+        FlexboxItem,
+        Datetime,
+        Confirm,
+        Loading,
+        Alert
+      },
+      mounted:function(){
+        this.$http.get('/wx/jssdk/config').then(
+          function(response){
+            wx.config({
+              appId : response.body.appId,
+              timestamp : response.body.timestamp,
+              nonceStr : response.body.nonceStr,
+              signature : response.body.signature,
+              jsApiList : ["chooseImage","uploadImage"]
             });
-          },
-          setNow (timeType) {
-            //TODO refactor
-            if('start' == timeType){
-              this.goods.startTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
-            }
-            if('end' == timeType){
-              this.goods.endTime = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
-            }
-          },
-          submitGoods(){
-            this.showSubmitLoading = true;
-            this.$http.post("/goods",goods).then(
-              function(response){
-                this.showSubmitLoading = false;
-                this.showSubmitSuccessTip = true;
-              },
-              function(){
-                this.showSubmitLoading = false;
-                this.showSubmitFailTip = true;
-              }
-            )
-          },
-          backToHome(){
-            window.history.back();
+            wx.ready(this.wxJsSdkInitialized);
+            wx.error(function(res){
+              this.$vux.alert.show({
+                title: '错误',
+                content: '初始化失败！',
+                onHide () {
+                  window.history.back();
+                }
+              });
+            })
           }
+          ,
+          function(){
+            this.$vux.alert.show({
+              title: '错误',
+              content: '初始化失败！',
+              onHide () {
+                window.history.back();
+              }
+            });
+          });
+      },
+      data(){
+        return{
+          goods:goods,
+          uploadBannerButtonLabel:uploadBannerButtonLabel,
+          uploadAuctionButtonLabel:uploadAuctionButtonLabel,
+          uploadShowLabel:uploadShowLabel,
+          uploadDescLabel:uploadDescLabel,
+          showSubmitConfirm:false,
+          showSubmitLoading:false,
+          showSubmitSuccessTip:false,
+          showSubmitFailTip:false,
+          showWxJsSdkLoading:showWxJsSdkLoading,
+          showUploadPictureLoading:showUploadPictureLoading
         }
-    }
+      },
+      methods:{
+        wxJsSdkInitialized(){
+          this.showWxJsSdkLoading =false;
+        },
+        uploadPicture(count,pictureUsage){
+          globalPictureUsage = pictureUsage;
+          wx.chooseImage({
+            count: count, // 默认9
+            //sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            //sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+            success: function (res) {
+              currentUploadPictureIndex = 0;
+              choosePictureIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+              serverIds = [];
+              showUploadPictureLoading = true;
+              uploadChoosePictures();
+            }
+          });
+        },
+        setNow (timeToSet) {
+          timeToSet = dateFormat(new Date(), 'YYYY-MM-DD HH:mm:ss');
+        },
+        submitGoods(){
+          this.showSubmitLoading = true;
+          this.$http.post("/goods",goods).then(
+            function(response){
+              this.showSubmitLoading = false;
+              this.$vux.confirm.show({
+                title : '提示',
+                content : '新增拍品成功！',
+                confirmText : "继续新增",
+                cancelText : "返回首页",
+                onCancel () {
+                  window.history.back();
+                },
+                onConfirm () {
+                  window.location.reload();
+                }
+              });
+            },
+            function(){
+              this.showSubmitLoading = false;
+              this.$vux.alert.show({
+                title: '错误',
+                content: '新增拍品失败！'
+              });
+            }
+          )
+        },
+        backToHome(){
+          window.history.back();
+        }
+      }
+    };
 
+    export default AddGoodsComponent;
 </script>
 
 <style>
