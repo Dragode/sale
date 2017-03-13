@@ -7,6 +7,8 @@ import VueResource from 'vue-resource';
 import App from './App.vue'
 import Home from './components/Dispatcher.vue'
 import AddGoods from './components/AddGoods.vue'
+import OrderManage from './components/OrderManage.vue'
+import UserManage from './components/UserManage.vue'
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
@@ -19,6 +21,14 @@ const routes = [
   {
     path: '/addGoods',
     component: AddGoods
+  },
+  {
+    path: '/orderManage',
+    component: OrderManage
+  },
+  {
+    path: '/userManage',
+    component: UserManage
   }
 ];
 

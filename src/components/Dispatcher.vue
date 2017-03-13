@@ -6,8 +6,8 @@
     </div>
     <group>
       <cell title="新增拍品" is-link link="/addGoods"></cell>
-      <cell title="订单管理" is-link></cell>
-      <cell title="会员管理" is-link></cell>
+      <cell title="订单管理" is-link link="/orderManage"></cell>
+      <cell title="会员管理" is-link link="/userManage"></cell>
     </group>
   </div>
 </template>
