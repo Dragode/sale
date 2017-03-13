@@ -50,7 +50,7 @@
                     });
                   }
                 ).then(()=>{
-                  httpClient.get("/user/"+order.userId).then(
+                  httpClient.get("/users/"+order.userId).then(
                     function(response){
                       userPhoneNumber = response.body.phoneNumber;
 
