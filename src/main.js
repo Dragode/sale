@@ -9,6 +9,7 @@ import Home from './components/Dispatcher.vue'
 import AddGoods from './components/AddGoods.vue'
 import OrderManage from './components/OrderManage.vue'
 import UserManage from './components/UserManage.vue'
+import SessionList from './components/SessionList.vue'
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
@@ -29,6 +30,10 @@ const routes = [
   {
     path: '/userManage',
     component: UserManage
+  },
+  {
+    path: '/sessionList',
+    component: SessionList
   }
 ];
 
