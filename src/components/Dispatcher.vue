@@ -1,13 +1,15 @@
 <template>
   <div>
     <div class="vux-demo">
-      <img class="logo" src="../assets/vux_logo.png">
+      <img class="logo" src="../assets/img/vux_logo.png">
       <h1> </h1>
     </div>
     <group>
+      <cell title="新增专场" is-link link="/addSession"></cell>
       <cell title="新增拍品" is-link link="/addGoods"></cell>
       <cell title="订单管理" is-link link="/orderManage"></cell>
       <cell title="会员管理" is-link link="/userManage"></cell>
+      <cell title="其他设置" is-link link="/setSystemConfig"></cell>
     </group>
   </div>
 </template>
@@ -22,11 +24,6 @@ export default {
   },
   data () {
     return {
-      // note: changing this line won't causes changes
-      // with hot-reload because the reloaded component
-      // preserves its current state and we are modifying
-      // its initial state.
-      msg: 'Hello World!'
     }
   }
 }

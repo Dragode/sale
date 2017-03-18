@@ -380,8 +380,8 @@ section.bidTime2 {
     line-height: 22px;
     position: absolute;
     right: 3px;
-    display: -webkit-box;
-    bottom: 16px
+    display: -webkit-box/*;
+    bottom: 16px*/
 }
 
 div.titlecell {

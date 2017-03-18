@@ -11,12 +11,10 @@
  * s: 表示分钟中的秒数   00~59
  */
 
-var DateFormat = function (bDebug) {
-  this.isDebug = bDebug || false;
-  this.curDate = new Date();
-};
+var DateFormat = {
+  isDebug : false,
+  curDate : new Date(),
 
-DateFormat.prototype = {
   //定义一些常用的日期格式的常量
   DEFAULT_DATE_FORMAT: 'yyyy-MM-dd',
   DEFAULT_MONTH_FORMAT: 'yyyy-MM',

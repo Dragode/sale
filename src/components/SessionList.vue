@@ -1,115 +1,147 @@
 <template>
-  <div class="main-container">
-    <section id="fframe_container">
-      <section class="banner">
-        <img :src="homeBanner">
-      </section>
+  <div style="height: 100%;">
+    <view-box ref="viewBox" body-padding-bottom="55px">
+      <div class="main-container">
+        <section class="banner">
+          <img :src="homeBannerUrl">
+        </section>
 
-      <div class="home_banner_spliter"></div>
+        <div class="home_banner_spliter"></div>
 
-      <div class="cell" v-for="session in sessionList">
-        <section class="album">
-          <section class="imgdivClass">
-            <img :src="session.bannerUr" class="bannerImg"/>
-          </section>
-          <section class="titlehere">
-            {{session.title}}
-          </section>
-          <section class="status">
-            <section class="countclass">
-              <section class="count">
-                <span class="numverclass" :class="[session.itemCountClass]">{{session.numberOfGoods}}</span>件宝贝
+        <div class="cell" v-for="session in sessionList">
+          <section class="album">
+            <section class="imgdivClass">
+              <img :src="session.bannerUr" class="bannerImg"/>
+            </section>
+            <section class="titlehere">
+              {{session.title}}
+            </section>
+            <section class="status">
+              <section class="countclass">
+                <section class="count">
+                  <span class="numverclass" :class="[session.itemCountClass]">{{session.numberOfGoods}}</span>件宝贝
+                </section>
+              </section>
+              <section :class="[session.bidTimeClass,session.backgroundColorClass]">
+                <!--<span class="iconClock">&#xe60b</span>-->
+                <span>{{session.auctionStatusDesc}}</span>
+                <div class="cornertobe"></div>
               </section>
             </section>
-            <section :class="[session.bidTimeClass,session.backgroundColorClass]">
-              <!--<span class="iconClock">&#xe60b</span>-->
-              <span>{{session.auctionStatusDesc}}</span>
-              <div class="cornertobe"></div>
-            </section>
           </section>
-        </section>
+        </div>
       </div>
-    </section>
+
+
+      <tabbar slot="bottom">
+        <tabbar-item selected link="/sessionList">
+          <img slot="icon" src="../assets/img/home.png">
+          <span slot="label">首页</span>
+        </tabbar-item>
+        <tabbar-item>
+          <img slot="icon" src="../assets/img/order.png">
+          <span slot="label">我的订单</span>
+        </tabbar-item>
+        <!--<tabbar-item v-if="user.role == 'administrator'">
+          <img slot="icon" src="../assets/img/set.png">
+          <span slot="label">管理后台</span>
+        </tabbar-item>-->
+      </tabbar>
+    </view-box>
   </div>
 </template>
 
 <script>
-    import DateFormat from "../utils/DateFormat.js"
-    export default{
-        data(){
-            return{
-              homeBanner:"",
-              sessionList:[
-              ]
-            }
-        },
-        mounted:function(){
-          var homeBanner = this.homeBanner;
-          this.$http.get('/sessions/homeBanner').then(
-            function(response){
-              homeBanner = response.body.value;
-            }
-            ,
-            function(){}
-          )
-
-          var sessionList = this.sessionList;
-          this.$http.get('/sessions').then(
-            function(response){
-              var sessions = response.body.items;
-              sessions.forEach(function(session){
-                var startTime = DateFormat.parseDate(session.startTime,"yyyy-MM-dd HH:mm:ss");
-                var endTime = DateFormat.parseDate(session.endTime,"yyyy-MM-dd HH:mm:ss");
-                var now = new Date();
-
-                var itemCountClass;
-                var auctionStatusDesc;
-                var bidTimeClass;
-                var backgroundColorClass;
-                if(now.getTime() < startTime.getTime()){
-                  itemCountClass = "goldenColor";
-                  auctionStatusDesc = DateFormat.format(startTime, "MM月dd日 hh:mm") + " 开始";
-                  bidTimeClass = "bidTime";
-                  backgroundColorClass = "goldenBackgroundColor";
-                }else if(now.getTime() < endTime.getTime()){
-                  itemCountClass = "redColor";
-                  auctionStatusDesc = DateFormat.format(endTime, "MM月dd日 hh:mm") + " 结束";
-                  bidTimeClass = "bidTime";
-                  backgroundColorClass = "redBackgroundColor";
-                }else{
-                  itemCountClass = "grayColor";
-                  auctionStatusDesc = "已结束";
-                  bidTimeClass = "bidTime2";
-                  backgroundColorClass = "grayBackgroundColor";
-                }
-
-                sessionList.push({
-                  bannerUr : session.bannerUrl,
-                  title : session.title,
-                  numberOfGoods : session.numberOfGoods,
-                  itemCountClass : itemCountClass,
-                  auctionStatusDesc : auctionStatusDesc,
-                  bidTimeClass : bidTimeClass,
-                  backgroundColorClass : backgroundColorClass
-                });
-              });
-            }
-            ,
-            function(){}
-          )
+  import DateFormat from "../utils/DateFormat.js"
+  import { Tabbar, TabbarItem , Scroller ,ViewBox } from 'vux'
+  export default{
+    components: {
+      Tabbar,
+      TabbarItem,
+      Scroller,
+      ViewBox
+    },
+    data(){
+      return {
+        homeBannerUrl: "",
+        sessionList: [],
+        user: {}
+      }
+    },
+    mounted: function () {
+      /*this.$http.get('/users/currentUser').then();*/
+      this.$http.get('/sessions/homeBanner').then(this.setHomeBanner, function () {
+      });
+      this.$http.get('/sessions').then(this.setSessionList, function () {
+      })
+    },
+    methods: {
+      setUser(response){
+        if (response && response.body && response.body.id) {
+          this.user = response.body;
         }
-    }
+      },
+      setHomeBanner(response){
+        this.homeBannerUrl = response.body.value;
+      },
+      setSessionList(response){
+        var sessions = response.body.items;
+        var sessionList = this.sessionList;
+        sessions.forEach(function (session) {
+          var startTime = DateFormat.parseDate(session.startTime, "yyyy-MM-dd HH:mm:ss");
+          var endTime = DateFormat.parseDate(session.endTime, "yyyy-MM-dd HH:mm:ss");
+          var now = new Date();
 
+          var itemCountClass;
+          var auctionStatusDesc;
+          var bidTimeClass;
+          var backgroundColorClass;
+          if (now.getTime() < startTime.getTime()) {
+            itemCountClass = "goldenColor";
+            auctionStatusDesc = DateFormat.format(startTime, "MM月dd日 HH:mm") + " 开始";
+            bidTimeClass = "bidTime";
+            backgroundColorClass = "goldenBackgroundColor";
+          } else if (now.getTime() < endTime.getTime()) {
+            itemCountClass = "redColor";
+            auctionStatusDesc = DateFormat.format(endTime, "MM月dd日 HH:mm") + " 结束";
+            bidTimeClass = "bidTime";
+            backgroundColorClass = "redBackgroundColor";
+          } else {
+            itemCountClass = "grayColor";
+            auctionStatusDesc = "已结束";
+            bidTimeClass = "bidTime2";
+            backgroundColorClass = "grayBackgroundColor";
+          }
+
+          sessionList.push({
+            bannerUr: session.bannerUrl,
+            title: session.title,
+            numberOfGoods: session.numberOfGoods,
+            itemCountClass: itemCountClass,
+            auctionStatusDesc: auctionStatusDesc,
+            bidTimeClass: bidTimeClass,
+            backgroundColorClass: backgroundColorClass
+          });
+        });
+      }
+    }
+  }
 </script>
 
 <style>
-  @import "../assets/css/pmp.css"
-
-    html{
-      font-size:37.5px!important;
-    }
-    body{
-      font-size:14.0625px
-    }
-
+  @import "../assets/css/pmp.css";
+</style>
+<style>
+  html {
+    font-size: 37.5px !important;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  body {
+    font-size: 14.0625px;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+  }
 </style>
