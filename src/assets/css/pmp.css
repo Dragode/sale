@@ -531,7 +531,8 @@ img.bannner2 {
 .banner {
     width: 100%;
     height: 160px;
-    overflow: hidden
+    overflow: hidden;
+    background-color: #e5e5e5;
 }
 
 .banner img {
@@ -593,7 +594,7 @@ img.bannner2 {
 
 @font-face {
     font-family: pm-iconfont;
-    src: url(../font/1462600353_3103302.ttf) format('truetype')
+    src: url(../font/pm-iconfont.ttf) format('truetype')
 }
 
 .pm-iconfont {
@@ -605,7 +606,7 @@ img.bannner2 {
 
 @font-face {
     font-family: pm-util-iconfont;
-    src: url(../font/1462599136_2986462.ttf) format('truetype')
+    src: url(../font/pm-util-iconfont.ttf) format('truetype')
 }
 
 .pm-util-iconfont {
@@ -661,7 +662,7 @@ img.bannner2 {
 }
 
 .first-screen {
-    padding-bottom:1.53125rem;
+    /*padding-bottom:1.53125rem;*/
 }
 
 .main-op {
@@ -682,7 +683,7 @@ img.bannner2 {
 }
 
 .main-op .main-btn {
-    margin-left: 4.3125rem;
+    /*margin-left: 4.3125rem;*/
     height: 1.5rem;
     line-height: 1.5rem;
     background-color: #820011;

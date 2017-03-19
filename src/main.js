@@ -10,8 +10,10 @@ import AddSession from './components/AddSession.vue'
 import AddGoods from './components/AddGoods.vue'
 import OrderManage from './components/OrderManage.vue'
 import UserManage from './components/UserManage.vue'
-import SessionList from './components/SessionList.vue'
 import SetSystemConfig from './components/SetSystemConfig.vue'
+
+import SessionList from './components/SessionList.vue'
+import GoodsDetail from './components/GoodsDetail.vue'
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
@@ -38,12 +40,17 @@ const routes = [
     component: UserManage
   },
   {
+    path: '/setSystemConfig',
+    component: SetSystemConfig
+  },
+
+  {
     path: '/sessionList',
     component: SessionList
   },
   {
-    path: '/setSystemConfig',
-      component: SetSystemConfig
+    path: '/goodsDetail',
+    component: GoodsDetail
   }
 ];
 
