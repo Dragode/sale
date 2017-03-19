@@ -10,12 +10,7 @@
       <x-input title="加价幅度" v-model="goods.bidIncrement"></x-input>
       <x-input title="保证金（0不用保证金）" v-model="goods.cashDeposit"></x-input>
       <x-input title="延迟周期(分钟)" v-model="goods.delayCycle"></x-input>
-      <datetime v-model="goods.startTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖开始时间'"
-                year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
-                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow(goods.startTime)"></datetime>
-      <datetime v-model="goods.endTime" :placeholder="'请选择'" :min-year=2017 format="YYYY-MM-DD HH:mm:00" :title="'拍卖结束时间'"
-                year-row="{value}年" month-row="{value}月" day-row="{value}日" hour-row="{value}点" minute-row="{value}分"
-                confirm-text="完成" cancel-text="取消" clear-text="现在" @on-clear="setNow(goods.startTime)"></datetime>
+
       <divider></divider>
       <x-button type="primary" @click.native="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
       <divider></divider>

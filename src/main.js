@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import VueResource from 'vue-resource';
 import App from './App.vue'
 import Home from './components/Dispatcher.vue'
+import AddSession from './components/AddSession.vue'
 import AddGoods from './components/AddGoods.vue'
 import OrderManage from './components/OrderManage.vue'
 import UserManage from './components/UserManage.vue'
@@ -19,6 +20,10 @@ const routes = [
   {
     path: '/',
     component: Home
+  },
+  {
+    path: '/addSession',
+    component: AddSession
   },
   {
     path: '/addGoods',
