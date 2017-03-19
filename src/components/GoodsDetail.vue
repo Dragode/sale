@@ -5,19 +5,24 @@
       <!--头部-->
       <div class="first-screen">
         <!--图片轮播-->
-        <div class="rc-slide"></div>
+        <swiper height="10rem" dots-position="center">
+          <swiper-item v-for="(item, index) in goods.showPictures" :key="index">
+            <img :src="item" style="width: 100%;">
+          </swiper-item>
+        </swiper>
 
         <!--拍卖状态-->
-        <div class="rc-statusbar before"><!--TODO class 根据时间生产-->
+        <div class="rc-statusbar" :class="{'before':goods.status==0,'ing':goods.status==1,'end':goods.status==2,'end':goods.status==3}">
           <div class="align-left">
             <span class="status-icon pm-iconfont">时</span>
-            <span class="status-flag">正在拍卖</span>
-            <span class="main">
-              <div class="countdown" style="display:none;">
-                <div>03天10时18分43秒</div>
+            <span class="status-flag">{{auctionStatusDesc}}</span>
+            <span class="main" v-if="goods.status==0 || goods.status==1">
+              <!--TODO 当时间接近结束的时候用，即时间小于一小时用-->
+              <div class="countdown" v-if="countdown">
+                <div>{{countdownDesc}}</div>
               </div>
-              <span class="time">
-                 <span class="time"><p><b>03</b><span>月</span><b>22</b><span>日</span> <b>22:00</b> 开始</p></span>
+              <span class="time" v-if="!countdown">
+                 <span class="time">{{formattedTime}}</span>
               </span>
               <span class="time-desc"></span>
             </span>
@@ -26,12 +31,16 @@
         </div>
 
         <!--标题、价格-->
-        <section class="pai-info pai-info-before"><!--TODO class 根据时间生产-->
+        <section class="pai-info" :class="{'pai-info-before':goods.status==0,'pai-info-ing':goods.status==1,'pai-info-end':goods.status==2,'pai-info-end':goods.status==3}">
           <div class="header">
-            <p class="title">商品标题</p>
-            <div class="rc-mobile-share pm-share">
-              <div class="rc-mobile-share-wrap">
-                <b class="icon pm-util-iconfont">空</b>提醒
+            <p class="title">{{goods.title}}</p>
+            <div class="rc-mobile-share pm-share" v-if="goods.status==0 || goods.status==1">
+              <div class="rc-mobile-share-wrap" @click="remind">
+                <b class="icon pm-util-iconfont">空</b>
+                <p v-if="goods.status==0 && registeredRemindTypes.indexOf(0)==-1">开拍提醒</p>
+                <p v-if="goods.status==1 && registeredRemindTypes.indexOf(1)==-1">结拍提醒</p>
+                <p v-if="goods.status==0 && registeredRemindTypes.indexOf(0)!=-1">已订阅提醒</p>
+                <p v-if="goods.status==1 && registeredRemindTypes.indexOf(1)!=-1">已订阅提醒</p>
               </div>
             </div>
           </div>
@@ -39,10 +48,9 @@
             <div class="unit"><b>RMB</b><span>当前价</span></div>
             <div class="price-number">
               <span class="price-comma">
-                  <em class="price-comma-price">888</em>
+                  <em class="price-comma-price">{{goods.currentPrice}}</em>
               </span>
             </div>
-            <!--<div class="price-format">1300元</div>-->
           </div>
         </section>
 
@@ -54,7 +62,7 @@
               <div class="param-value">
                 <span class="price-comma">
                   <i class="price-comma-rmb">￥</i>
-                  <em class="price-comma-price">200</em>
+                  <em class="price-comma-price">{{goods.startingPrice}}</em>
                 </span>
               </div>
             </dd>
@@ -63,7 +71,7 @@
               <div class="param-value">
                 <span class="price-comma">
                   <i class="price-comma-rmb">￥</i>
-                  <em class="price-comma-price">888</em>
+                  <em class="price-comma-price">{{goods.evaluate}}</em>
                 </span>
               </div>
             </dd>
@@ -72,25 +80,25 @@
               <div class="param-value">
                 <span class="price-comma">
                   <i class="price-comma-rmb">￥</i>
-                  <em class="price-comma-price">5</em>
+                  <em class="price-comma-price">{{goods.bidIncrement}}</em>
                 </span>
               </div>
             </dd>
             <dd class="twoColumn item no-border">
               <div class="param-name">延时周期</div>
-              <div class="param-value">5分/次</div>
+              <div class="param-value">{{goods.delayCycle}}分/次</div>
             </dd>
             <dd class="twoColumn item no-border">
               <div class="param-name">品种</div>
-              <div class="param-value">好品种</div>
+              <div class="param-value">{{goods.breed}}</div>
             </dd>
             <dd class="twoColumn item no-border">
               <div class="param-name">规格</div>
-              <div class="param-value">最高规格</div>
+              <div class="param-value">{{goods.standard}}</div>
             </dd>
             <dd class="twoColumn item no-border">
               <div class="param-name">作者</div>
-              <div class="param-value">知名作者</div>
+              <div class="param-value">{{goods.author}}</div>
             </dd>
           </dl>
         </div>
@@ -99,7 +107,7 @@
       <!--商品详情-->
       <div class="second-screen inited">
         <div class="second-screen-wrap">
-          <div class="rc-tabs rc-tabs-top" tabindex="0" style="min-height: 592px;">
+          <div class="rc-tabs rc-tabs-top">
             <div class="rc-tabs-content">
               <div class="rc-tabs-tabpane">
                 <div class="list-title"><strong>图文详情</strong></div>
@@ -115,7 +123,7 @@
                 <div class="cdn-content">
                   <div class="cdn-content-desc">
                     <!--商品图片-->
-                    <img class="J_LazyLoad" v-for="descPic in descPictures" :src="descPic">
+                    <img v-for="descPic in goods.descPictures" :src="descPic">
                   </div>
                 </div>
 
@@ -154,7 +162,7 @@
                     <br>
                     退货原则
                     <br>
-                    藏品自本商城发货时间起7天内原件无损坏的情况          ，可以向本商城提出退货申请，联系管理员。本商城确认并通过申请后3天内，将藏品保持原样退回。本商城确认藏品无损坏后将全额退款。
+                    藏品自本商城发货时间起7天内原件无损坏的情况 ，可以向本商城提出退货申请，联系管理员。本商城确认并通过申请后3天内，将藏品保持原样退回。本商城确认藏品无损坏后将全额退款。
                     <br>
                   </div>
                 </div>
@@ -165,12 +173,12 @@
       </div>
 
       <!--底部按钮-->
-      <section class="main-op">
+      <section class="main-op" v-if="goods.status == 1">
         <div class="main-btn">
           <div class="jiaobao">
             <p class="action">竞拍</p>
-            <p class="foregift">
-              (保证金金额<b>￥</b>1111)
+            <p class="foregift" v-if="goods.cashDeposit != 0">
+              (保证金金额<b>￥</b>{{goods.cashDeposit}})
             </p>
           </div>
         </div>
@@ -180,24 +188,77 @@
 </template>
 
 <script>
+  import { Swiper , SwiperItem , dateFormat } from 'vux'
+  import DateFormat from "../utils/DateFormat.js"
+
   export default{
-    components: {},
+    components: {
+      Swiper,
+      SwiperItem
+    },
     data(){
       return {
-        goods: {},
-        descPictures: [
-          "/exampleImg/goodsDescExample2.jpg",
-          "/exampleImg/goodsDescExample3.jpg"
-        ]
+        goods: {
+        },
+        auctionStatusDesc:"",
+        countdown:false,
+        countdownDesc:"03天10时18分43秒",
+        formattedTime:"",
+        registeredRemindTypes:[]
       }
     },
-    methods: {}
+    mounted:function(){
+      this.$http.get("/goods/"+this.$route.params.goodsId).then(this.renderGoods)
+          .then(this.$http.get("/reminds").then(this.renderRemind));
+    },
+    methods: {
+      renderGoods(response){
+        this.goods = response.body;
+        if(this.goods.status == 0){
+          this.auctionStatusDesc = "即将开始";
+          var startTime = DateFormat.parseDate(this.goods.startTime,"yyyy-MM-dd hh:mm:ss");
+          this.formattedTime = DateFormat.format(startTime, 'MM月dd日 HH:mm 开始');
+        }else if(this.goods.status == 1){
+          this.auctionStatusDesc = "正在拍卖";
+          var endTime = DateFormat.parseDate(this.goods.endTime,"yyyy-MM-dd hh:mm:ss");
+          this.formattedTime = DateFormat.format(endTime, 'MM月dd日 HH:mm 结束');
+        }else{
+          this.auctionStatusDesc = "已结束";
+        }
+      },
+      renderRemind(response){
+        this.registeredRemindTypes = response.body.items;
+      },
+      remind(){
+        var remindType = null;
+        if (this.goods.status == 0) {
+          if(this.registeredRemindTypes.indexOf(0) != -1){
+            this.registerRemindSuccess();
+          }
+          remindType = 0;
+        } else if (this.goods.status == 1) {
+          if(this.registeredRemindTypes.indexOf(1) != -1){
+            this.registerRemindSuccess();
+          }
+          remindType = 1;
+        }
+
+        if (remindType != null) {
+          this.$http.post("/reminds/goodsId/" + this.$route.params.goodsId,remindType).then(this.registerRemindSuccess)
+        }
+      },
+      registerRemindSuccess(){
+        this.$http.get("/reminds").then(this.renderRemind);
+        this.$vux.alert.show({
+          title: '提示',
+          content: '订阅提醒成功！'
+        });
+      }
+    }
   }
 </script>
 
 <style>
-  /*@import "../assets/css/m-base_2.0.1_reset.css";
-  @import "../assets/css/common.css";*/
   @import "../assets/css/p_detail_index.css";
 </style>
 <style>

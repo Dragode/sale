@@ -49,7 +49,7 @@ const routes = [
     component: SessionList
   },
   {
-    path: '/goodsDetail',
+    path: '/goodsDetail/:goodsId',
     component: GoodsDetail
   }
 ];
