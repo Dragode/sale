@@ -33,15 +33,15 @@
 
 
       <tabbar slot="bottom">
-        <tabbar-item selected link="/sessionList">
+        <tabbar-item selected link="/">
           <img slot="icon" src="../assets/img/home.png">
           <span slot="label">首页</span>
         </tabbar-item>
-        <tabbar-item>
+        <tabbar-item link="/">
           <img slot="icon" src="../assets/img/order.png">
           <span slot="label">我的订单</span>
         </tabbar-item>
-        <tabbar-item v-if="user.role == 'administrator'">
+        <tabbar-item v-if="user.role == 'administrator'" link="/admin">
           <img slot="icon" src="../assets/img/set.png">
           <span slot="label">管理后台</span>
         </tabbar-item>
