@@ -125,7 +125,7 @@
 </script>
 
 <style>
-  @import "../assets/css/pmp.css";
+  @import "../assets/css/session_list.css";
 </style>
 <style>
   html {

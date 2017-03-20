@@ -259,7 +259,7 @@
 </script>
 
 <style>
-  @import "../assets/css/p_detail_index.css";
+  @import "../assets/css/goods_detail.css";
 </style>
 <style>
   html {
