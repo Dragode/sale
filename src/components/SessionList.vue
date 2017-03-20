@@ -11,7 +11,7 @@
         <div class="cell" v-for="session in sessionList">
           <section class="album" @click="goToGoodsList(session)">
             <section class="imgdivClass">
-              <img :src="session.bannerUr" class="bannerImg"/>
+              <img :src="session.bannerUrl" class="bannerImg"/>
             </section>
             <section class="titlehere">
               {{session.title}}
@@ -68,64 +68,58 @@
         user: {}
       }
     },
-    mounted: function () {
-      /*this.$http.get('/users/currentUser').then();*/
-      this.$http.get('/sessions/homeBanner').then(this.setHomeBanner, function () {
-      });
-      this.$http.get('/sessions').then(this.setSessionList, function () {
-      })
+    created: function () {
+      /*this.$http.get('/users/currentUser')
+        .then(response=>{return response.body})
+        .then(this.setUser);*/
+
+
+      this.$http.get('/sessions/homeBanner')
+        .then(response=>{return response.body})
+        .then(this.setHomeBanner);
+
+      this.$http.get('/sessions')
+        .then(response=>{return response.body})
+        .then(this.setSessionList);
+
     },
     methods: {
-      goToGoodsList(session){
-        alert("id="+session.title);
+      setUser(user){
+        this.user = user;
       },
-      setUser(response){
-        if (response && response.body && response.body.id) {
-          this.user = response.body;
-        }
+      setHomeBanner(homeBanner){
+        this.homeBannerUrl = homeBanner.value;
       },
-      setHomeBanner(response){
-        this.homeBannerUrl = response.body.value;
-      },
-      setSessionList(response){
-        var sessions = response.body.items;
+      setSessionList(responseBody){
+        var sessions = responseBody.items;
         var sessionList = this.sessionList;
         sessions.forEach(function (session) {
           var startTime = DateFormat.parseDate(session.startTime, "yyyy-MM-dd HH:mm:ss");
           var endTime = DateFormat.parseDate(session.endTime, "yyyy-MM-dd HH:mm:ss");
           var now = new Date();
 
-          var itemCountClass;
-          var auctionStatusDesc;
-          var bidTimeClass;
-          var backgroundColorClass;
           if (now.getTime() < startTime.getTime()) {
-            itemCountClass = "goldenColor";
-            auctionStatusDesc = DateFormat.format(startTime, "MM月dd日 HH:mm") + " 开始";
-            bidTimeClass = "bidTime";
-            backgroundColorClass = "goldenBackgroundColor";
+            session.itemCountClass = "goldenColor";
+            session.auctionStatusDesc = DateFormat.format(startTime, "MM月dd日 HH:mm") + " 开始";
+            session.bidTimeClass = "bidTime";
+            session.backgroundColorClass = "goldenBackgroundColor";
           } else if (now.getTime() < endTime.getTime()) {
-            itemCountClass = "redColor";
-            auctionStatusDesc = DateFormat.format(endTime, "MM月dd日 HH:mm") + " 结束";
-            bidTimeClass = "bidTime";
-            backgroundColorClass = "redBackgroundColor";
+            session.itemCountClass = "redColor";
+            session.auctionStatusDesc = DateFormat.format(endTime, "MM月dd日 HH:mm") + " 结束";
+            session.bidTimeClass = "bidTime";
+            session.backgroundColorClass = "redBackgroundColor";
           } else {
-            itemCountClass = "grayColor";
-            auctionStatusDesc = "已结束";
-            bidTimeClass = "bidTime2";
-            backgroundColorClass = "grayBackgroundColor";
+            session.itemCountClass = "grayColor";
+            session.auctionStatusDesc = "已结束";
+            session.bidTimeClass = "bidTime2";
+            session.backgroundColorClass = "grayBackgroundColor";
           }
 
-          sessionList.push({
-            bannerUr: session.bannerUrl,
-            title: session.title,
-            numberOfGoods: session.numberOfGoods,
-            itemCountClass: itemCountClass,
-            auctionStatusDesc: auctionStatusDesc,
-            bidTimeClass: bidTimeClass,
-            backgroundColorClass: backgroundColorClass
-          });
+          sessionList.push(session);
         });
+      },
+      goToGoodsList(session){
+        this.$router.push('/goodsList/'+session.id);
       }
     }
   }

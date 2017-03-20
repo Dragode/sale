@@ -3,7 +3,7 @@
     <div class="module-wrap">
       <div class="auction-container square-col1">
         <div class="auction-wrapper" v-for="goods in goodsList">
-          <a href="" class="item" :class="{wait:goods.status==0,ing:goods.status==1,end:goods.status>=2}">
+          <a href="javascript:void(0);" @click="goToGoodsDetail(goods)" class="item" :class="{wait:goods.status==0,ing:goods.status==1,end:goods.status>=2}">
             <div class="img-wrapper">
               <img :src="goods.bannerUrl" style="width: 100%;">
             </div>
@@ -24,7 +24,7 @@
                   </div>
                   <div class="time-status">
                     <span class="date-desc" :class="{wait:goods.status==0,ing:goods.status==1,end:goods.status>=2}">
-                      {{formatDate(goods)}}
+                      {{formatDateDesc(goods)}}
                     </span>
                   </div>
                 </div>
@@ -50,16 +50,16 @@
               goodsList:[]
             }
         },
-        components:{
-        },
-        mounted:function(){
-          this.$http.get("/goods/sessionId/"+this.$route.params.sessionId).then(this.renderGoodsList);
+        created:function(){
+          this.$http.get("/goods/sessionId/"+this.$route.params.sessionId)
+            .then(response=>{return response.body.items})
+            .then(this.setGoodsList);
         },
         methods:{
-          renderGoodsList(response){
-            this.goodsList = response.body.items;
+          setGoodsList(goodsList){
+            this.goodsList = goodsList;
           },
-          formatDate(goods){
+          formatDateDesc(goods){
             if(goods.status == 0){
                 var startTime = DateFormat.parseDate(goods.startTime,"yyyy-MM-dd hh:mm:ss");
                 return DateFormat.format(startTime,"MM月dd日 HH:mm 开始");
@@ -69,6 +69,9 @@
             }else{
               return "已结束";
             }
+          },
+          goToGoodsDetail(goods){
+            this.$router.push('/goodsDetail/'+goods.id);
           }
         }
     }
