@@ -12,7 +12,7 @@
         </swiper>
 
         <!--拍卖状态-->
-        <div class="rc-statusbar" :class="{'before':goods.status==0,'ing':goods.status==1,'end':goods.status==2,'end':goods.status==3}">
+        <div class="rc-statusbar" :class="{'before':goods.status==0,'ing':goods.status==1,'end':goods.status>=2}">
           <div class="align-left">
             <span class="status-icon pm-iconfont">时</span>
             <span class="status-flag">{{auctionStatusDesc}}</span>
@@ -31,7 +31,7 @@
         </div>
 
         <!--标题、价格-->
-        <section class="pai-info" :class="{'pai-info-before':goods.status==0,'pai-info-ing':goods.status==1,'pai-info-end':goods.status==2,'pai-info-end':goods.status==3}">
+        <section class="pai-info" :class="{'pai-info-before':goods.status==0,'pai-info-ing':goods.status==1,'pai-info-end':goods.status>=2}">
           <div class="header">
             <p class="title">{{goods.title}}</p>
             <div class="rc-mobile-share pm-share" v-if="goods.status==0 || goods.status==1">

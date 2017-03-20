@@ -1,15 +1,20 @@
 <template>
   <div>
-    <divider>上传拍品</divider>
     <box gap="10px 10px">
 
       <x-button type="primary" @click.native="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
       <divider></divider>
+      <popup-picker title="所属专场" :data="sessionList" v-model="session" ref="sessionPicker" @on-change="onChange" show-name></popup-picker>
+      <cell title="session-code" :value="$refs.sessionPicker&&$refs.sessionPicker.getNameValues()"></cell>
       <x-input title="标题" v-model="goods.title"></x-input>
       <x-input title="起拍价" v-model="goods.startingPrice"></x-input>
-      <x-input title="加价幅度" v-model="goods.bidIncrement"></x-input>
+      <x-input title="市场估价" v-model="goods.evaluate"></x-input>
       <x-input title="保证金（0不用保证金）" v-model="goods.cashDeposit"></x-input>
+      <x-input title="加价幅度" v-model="goods.bidIncrement"></x-input>
       <x-input title="延迟周期(分钟)" v-model="goods.delayCycle"></x-input>
+      <x-input title="品种" v-model="goods.breed"></x-input>
+      <x-input title="规格" v-model="goods.standard"></x-input>
+      <x-input title="作者" v-model="goods.author"></x-input>
 
       <divider></divider>
       <x-button type="primary" @click.native="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
@@ -45,7 +50,7 @@
 </template>
 
 <script>
-    import { Box, XButton ,XInput , Divider , Flexbox , FlexboxItem , Datetime , Confirm , Loading , Alert , dateFormat } from 'vux'
+    import { Cell ,PopupPicker , Box, XButton ,XInput , Divider , Flexbox , FlexboxItem , Datetime , Confirm , Loading , Alert , dateFormat } from 'vux'
     import Vue from 'vue'
     import  { AlertPlugin } from 'vux'
     Vue.use(AlertPlugin);
@@ -53,7 +58,7 @@
     Vue.use(ConfirmPlugin);
     const wx = require('weixin-js-sdk')
 
-    var showWxJsSdkLoading = true;
+    var showWxJsSdkLoading = false;
     var showUploadPictureLoading =false;
     var uploadBannerButtonLabel = '上传封面图片';
     var uploadAuctionButtonLabel = '上传竞拍大厅图片';
@@ -63,10 +68,10 @@
     var goods = {
       bannerPictureWxServerId:'',
       title:'拍品标题',
-      startingPrice:0,
-      bidIncrement:0,
-      cashDeposit:0,
-      delayCycle:0,
+      startingPrice:'0',
+      bidIncrement:'0',
+      cashDeposit:'0',
+      delayCycle:'5',
       startTime:'',
       endTime:'',
       auctionPictureWxServerId:'',
@@ -132,7 +137,9 @@
         Datetime,
         Confirm,
         Loading,
-        Alert
+        Alert,
+        PopupPicker,
+        Cell
       },
       mounted:function(){
         this.$http.get('/wx/jssdk/config').then(
@@ -178,10 +185,18 @@
           showSubmitSuccessTip:false,
           showSubmitFailTip:false,
           showWxJsSdkLoading:showWxJsSdkLoading,
-          showUploadPictureLoading:showUploadPictureLoading
+          showUploadPictureLoading:showUploadPictureLoading,
+          sessionList:[[
+            {name:"1专场",value:1},
+            {name:"2专场",value:2}
+          ]],
+          session:[]
         }
       },
       methods:{
+        onChange (val) {
+          console.log('val change', val)
+        },
         wxJsSdkInitialized(){
           this.showWxJsSdkLoading =false;
         },
