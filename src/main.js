@@ -5,7 +5,7 @@ import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource';
 import App from './App.vue'
-import Home from './components/Dispatcher.vue'
+import Admin from './components/Admin.vue'
 import AddSession from './components/AddSession.vue'
 import AddGoods from './components/AddGoods.vue'
 import OrderManage from './components/OrderManage.vue'
@@ -21,8 +21,8 @@ Vue.use(VueResource);
 
 const routes = [
   {
-    path: '/',
-    component: Home
+    path: '/admin',
+    component: Admin
   },
   {
     path: '/addSession',
@@ -46,7 +46,7 @@ const routes = [
   },
 
   {
-    path: '/sessionList',
+    path: '/',
     component: SessionList
   },
   {

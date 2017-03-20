@@ -9,7 +9,7 @@
         <div class="home_banner_spliter"></div>
 
         <div class="cell" v-for="session in sessionList">
-          <section class="album">
+          <section class="album" @click="goToGoodsList(session)">
             <section class="imgdivClass">
               <img :src="session.bannerUr" class="bannerImg"/>
             </section>
@@ -76,6 +76,9 @@
       })
     },
     methods: {
+      goToGoodsList(session){
+        alert("id="+session.title);
+      },
       setUser(response){
         if (response && response.body && response.body.id) {
           this.user = response.body;
