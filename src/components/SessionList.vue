@@ -23,7 +23,6 @@
                 </section>
               </section>
               <section :class="[session.bidTimeClass,session.backgroundColorClass]">
-                <!--<span class="iconClock">&#xe60b</span>-->
                 <span>{{session.auctionStatusDesc}}</span>
                 <div class="cornertobe"></div>
               </section>
@@ -42,10 +41,10 @@
           <img slot="icon" src="../assets/img/order.png">
           <span slot="label">我的订单</span>
         </tabbar-item>
-        <!--<tabbar-item v-if="user.role == 'administrator'">
+        <tabbar-item v-if="user.role == 'administrator'">
           <img slot="icon" src="../assets/img/set.png">
           <span slot="label">管理后台</span>
-        </tabbar-item>-->
+        </tabbar-item>
       </tabbar>
     </view-box>
   </div>
@@ -69,9 +68,9 @@
       }
     },
     created: function () {
-      /*this.$http.get('/users/currentUser')
+      this.$http.get('/users/currentUser')
         .then(response=>{return response.body})
-        .then(this.setUser);*/
+        .then(this.setUser);
 
 
       this.$http.get('/sessions/homeBanner')
