@@ -1,15 +1,9 @@
 
-body, html {
-    height: 100%
-}
-
 .rc-statusbar .main .time, .rc-statusbar .main .time-desc {
     letter-spacing: .015625rem
 }
 
-body {
-    overflow: hidden
-}
+
 
 .hide {
     display: none;

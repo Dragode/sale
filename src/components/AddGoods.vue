@@ -3,7 +3,7 @@
     <box gap="10px 10px">
       <x-button type="primary" @click="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
       <divider></divider>
-      <popup-picker title="所属专场" :data="sessionList" v-model="sessionSelected" @on-change="onChange" show-name></popup-picker>
+      <popup-picker title="所属专场" :data="sessionList" v-model="sessionSelected" @on-change="selectedSession" show-name></popup-picker>
       <x-input title="标题" v-model="goods.title"></x-input>
       <x-input title="起拍价" v-model="goods.startingPrice"></x-input>
       <x-input title="市场估价" v-model="goods.evaluate"></x-input>
@@ -68,7 +68,7 @@
       bannerPictureWxServerId:'',
       title:'拍品标题',
       startingPrice:'0',
-      bidIncrement:'0',
+      bidIncrement:'50',
       cashDeposit:'0',
       buyoutPrice:'0',
       delayCycle:'5',
@@ -206,7 +206,9 @@
           });
         },
         selectedSession (selectedValue) {
+          console.log(selectedValue);
           this.goods.sessionId = parseInt(selectedValue[0]);
+          console.log(this.goods);
         },
         wxJsSdkInitialized(){
           this.showWxJsSdkLoading =false;
