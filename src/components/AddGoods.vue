@@ -1,7 +1,7 @@
 <template>
   <div>
     <box gap="10px 10px">
-      <x-button type="primary" @click="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
+      <x-button type="primary" @click.native="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
       <divider></divider>
       <popup-picker title="所属专场" :data="sessionList" v-model="sessionSelected" @on-change="selectedSession" show-name></popup-picker>
       <x-input title="标题" v-model="goods.title"></x-input>
@@ -16,11 +16,11 @@
       <x-input title="作者" v-model="goods.author"></x-input>
 
       <divider></divider>
-      <x-button type="primary" @click="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
+      <x-button type="primary" @click.native="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
       <divider></divider>
-      <x-button type="primary" @click="uploadPicture(9,'show')">上传商品详情页顶部图片</x-button>
+      <x-button type="primary" @click.native="uploadPicture(9,'show')">上传商品详情页顶部图片</x-button>
       <divider>{{uploadShowLabel}}</divider>
-      <x-button type="primary" @click="uploadPicture(9,'desc')">上传商品详情页详情图片</x-button>
+      <x-button type="primary" @click.native="uploadPicture(9,'desc')">上传商品详情页详情图片</x-button>
       <divider>{{uploadDescLabel}}</divider>
 
       <divider></divider>
