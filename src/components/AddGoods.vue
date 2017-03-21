@@ -1,15 +1,14 @@
 <template>
   <div>
     <box gap="10px 10px">
-
-      <x-button type="primary" @click.native="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
+      <x-button type="primary" @click="uploadPicture(1,'banner')">{{uploadBannerButtonLabel}}</x-button>
       <divider></divider>
-      <popup-picker title="所属专场" :data="sessionList" v-model="session" ref="sessionPicker" @on-change="onChange" show-name></popup-picker>
-      <cell title="session-code" :value="$refs.sessionPicker&&$refs.sessionPicker.getNameValues()"></cell>
+      <popup-picker title="所属专场" :data="sessionList" v-model="sessionSelected" @on-change="onChange" show-name></popup-picker>
       <x-input title="标题" v-model="goods.title"></x-input>
       <x-input title="起拍价" v-model="goods.startingPrice"></x-input>
       <x-input title="市场估价" v-model="goods.evaluate"></x-input>
       <x-input title="保证金（0不用保证金）" v-model="goods.cashDeposit"></x-input>
+      <x-input title="一口价（0没有一口价）" v-model="goods.buyoutPrice"></x-input>
       <x-input title="加价幅度" v-model="goods.bidIncrement"></x-input>
       <x-input title="延迟周期(分钟)" v-model="goods.delayCycle"></x-input>
       <x-input title="品种" v-model="goods.breed"></x-input>
@@ -17,11 +16,11 @@
       <x-input title="作者" v-model="goods.author"></x-input>
 
       <divider></divider>
-      <x-button type="primary" @click.native="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
+      <x-button type="primary" @click="uploadPicture(1,'auction')">{{uploadAuctionButtonLabel}}</x-button>
       <divider></divider>
-      <x-button type="primary" @click.native="uploadPicture(9,'show')">上传商品详情页顶部图片</x-button>
+      <x-button type="primary" @click="uploadPicture(9,'show')">上传商品详情页顶部图片</x-button>
       <divider>{{uploadShowLabel}}</divider>
-      <x-button type="primary" @click.native="uploadPicture(9,'desc')">上传商品详情页详情图片</x-button>
+      <x-button type="primary" @click="uploadPicture(9,'desc')">上传商品详情页详情图片</x-button>
       <divider>{{uploadDescLabel}}</divider>
 
       <divider></divider>
@@ -56,7 +55,7 @@
     Vue.use(AlertPlugin);
     import  { ConfirmPlugin } from 'vux'
     Vue.use(ConfirmPlugin);
-    const wx = require('weixin-js-sdk')
+    const wx = require('weixin-js-sdk');
 
     var showWxJsSdkLoading = false;
     var showUploadPictureLoading =false;
@@ -71,6 +70,7 @@
       startingPrice:'0',
       bidIncrement:'0',
       cashDeposit:'0',
+      buyoutPrice:'0',
       delayCycle:'5',
       startTime:'',
       endTime:'',
@@ -126,7 +126,7 @@
       }
     }
 
-    var AddGoodsComponent = {
+    export default {
       components: {
         Box,
         XInput,
@@ -141,7 +141,7 @@
         PopupPicker,
         Cell
       },
-      mounted:function(){
+      created:function(){
         this.$http.get('/wx/jssdk/config').then(
           function(response){
             wx.config({
@@ -172,6 +172,9 @@
               }
             });
           });
+
+        this.$http.get('/sessions')
+          .then(this.setSessionList);
       },
       data(){
         return{
@@ -187,15 +190,23 @@
           showWxJsSdkLoading:showWxJsSdkLoading,
           showUploadPictureLoading:showUploadPictureLoading,
           sessionList:[[
-            {name:"1专场",value:1},
-            {name:"2专场",value:2}
           ]],
-          session:[]
+          sessionSelected:[]
         }
       },
       methods:{
-        onChange (val) {
-          console.log('val change', val)
+        setSessionList(response){
+          var sessionList = response.body.items;
+          sessionList.forEach(this.addSession);
+        },
+        addSession(session){
+          this.sessionList[0].push({
+            name: session.title,
+            value: session.id.toString()
+          });
+        },
+        selectedSession (selectedValue) {
+          this.goods.sessionId = parseInt(selectedValue[0]);
         },
         wxJsSdkInitialized(){
           this.showWxJsSdkLoading =false;
@@ -220,6 +231,7 @@
         },
         submitGoods(){
           this.showSubmitLoading = true;
+          console.log(JSON.stringify(goods));
           this.$http.post("/goods",goods).then(
             function(response){
               this.showSubmitLoading = false;
@@ -250,8 +262,6 @@
         }
       }
     };
-
-    export default AddGoodsComponent;
 </script>
 
 <style>
