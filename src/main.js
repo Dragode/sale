@@ -15,6 +15,8 @@ import SetSystemConfig from './components/SetSystemConfig.vue'
 import SessionList from './components/SessionList.vue'
 import GoodsList from './components/GoodsList.vue'
 import GoodsDetail from './components/GoodsDetail.vue'
+import Register from './components/Register.vue'
+import CashDepositDesc from './components/CashDepositDesc.vue'
 import AuctionMall from './components/AuctionMall.vue'
 
 Vue.use(VueRouter);
@@ -57,6 +59,14 @@ const routes = [
   {
     path: '/goodsDetail/:goodsId',
     component: GoodsDetail
+  },
+  {
+    path: '/register/:goodsId',
+    component: Register
+  },
+  {
+    path: '/cashDepositDesc',
+    component: CashDepositDesc
   },
   {
     path: '/auctionMall/:goodsId',

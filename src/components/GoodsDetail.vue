@@ -173,7 +173,7 @@
       </div>
 
       <!--底部按钮-->
-      <section class="main-op" v-if="goods.status == 1">
+      <section class="main-op" v-if="goods.status == 1" @click="goToAuction">
         <div class="main-btn">
           <div class="jiaobao">
             <p class="action">竞拍</p>
@@ -183,28 +183,37 @@
           </div>
         </div>
       </section>
+
+      <confirm v-model="tipCashDeposit" title="提示"
+               confirm-text="知道了" cancel-text="查看保证金描述"
+               @on-cancel="seeCashDepositDesc">
+        <p style="text-align:center;">该商品需要缴纳保证金，请联系客服。客服联系方式：xxxxx</p>
+      </confirm>
+
     </div>
   </div>
 </template>
 
 <script>
-  import { Swiper , SwiperItem , dateFormat } from 'vux'
+  import { Swiper , SwiperItem , dateFormat , Confirm } from 'vux'
   import DateFormat from "../utils/DateFormat.js"
 
   export default{
     components: {
       Swiper,
-      SwiperItem
+      SwiperItem,
+      Confirm
     },
     data(){
       return {
-        goods: {
-        },
+        goods: {},
+        user:{},
         auctionStatusDesc:"",
         countdown:false,
         countdownDesc:"03天10时18分43秒",
         formattedTime:"",
-        registeredRemindTypes:[]
+        registeredRemindTypes:[],
+        tipCashDeposit:false
       }
     },
     mounted:function(){
@@ -253,6 +262,28 @@
           title: '提示',
           content: '订阅提醒成功！'
         });
+      },
+      goToAuction(){
+        this.$http.get("/users/currentUser")
+            .then(response=>{return response.body})
+            .then(this.chooseWhereToGo)
+      },
+      chooseWhereToGo(user){
+        this.user = user;
+        if(user && !user.phoneNumber){
+          //先判断用户是否注册
+          this.$router.push({path:"/register/"+this.goods.id});
+        }else if("normal" == user.role && 0 != this.goods.cashDeposit){
+          //已注册的用户，判断是否要交保证金
+          //普通用户拍卖需要保证金的商品需要缴纳保证金
+          this.tipCashDeposit = true;
+        }else{
+          //不需要交保证金，则前往拍卖大厅
+          this.$router.push({path:"/auctionMall/"+this.goods.id});
+        }
+      },
+      seeCashDepositDesc(){
+        this.$router.push({path:"/cashDepositDesc"});
       }
     }
   }
