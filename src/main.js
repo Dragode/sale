@@ -13,6 +13,7 @@ import UserManage from './components/UserManage.vue'
 import SetSystemConfig from './components/SetSystemConfig.vue'
 
 import SessionList from './components/SessionList.vue'
+import MyOrders from './components/MyOrders.vue'
 import GoodsList from './components/GoodsList.vue'
 import GoodsDetail from './components/GoodsDetail.vue'
 import Register from './components/Register.vue'
@@ -51,6 +52,10 @@ const routes = [
   {
     path: '/',
     component: SessionList
+  },
+  {
+    path: '/myOrders',
+    component: MyOrders
   },
   {
     path: '/goodsList/:sessionId',

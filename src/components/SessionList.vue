@@ -37,7 +37,7 @@
           <img slot="icon" src="../assets/img/home.png">
           <span slot="label">首页</span>
         </tabbar-item>
-        <tabbar-item link="/">
+        <tabbar-item link="/myOrders">
           <img slot="icon" src="../assets/img/order.png">
           <span slot="label">我的订单</span>
         </tabbar-item>
