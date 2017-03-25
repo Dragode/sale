@@ -54,6 +54,9 @@
                 }
               ];
 
+              if(!user.phoneNumber){
+                user.phoneNumber = "未注册";
+              }
               userList.push(user);
             })
           } else {

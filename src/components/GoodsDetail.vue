@@ -190,12 +190,15 @@
         <p style="text-align:center;">该商品需要缴纳保证金，请联系客服。客服联系方式：xxxxx</p>
       </confirm>
 
+      <alert v-model="tipBlackList" :title="'提示'">请联系客服开通购买权限。客服联系方式：xxxxx</alert>
     </div>
   </div>
 </template>
 
 <script>
-  import { Swiper , SwiperItem , dateFormat , Confirm } from 'vux'
+  import { Swiper , SwiperItem , dateFormat , Confirm , AlertPlugin } from 'vux'
+  import Vue from 'vue'
+  Vue.use(AlertPlugin);
   import DateFormat from "../utils/DateFormat.js"
 
   export default{
@@ -273,6 +276,13 @@
         if(user && !user.phoneNumber){
           //先判断用户是否注册
           this.$router.push({path:"/register/"+this.goods.id});
+        }else if("black_list" == user.role){
+          //黑名单用户提示
+          this.$vux.alert.show({
+            title: '错误',
+            content: '请联系客服开通购买权限。客服联系方式：xxxxx'
+          });
+          console.log("hei");
         }else if("normal" == user.role && 0 != this.goods.cashDeposit){
           //已注册的用户，判断是否要交保证金
           //普通用户拍卖需要保证金的商品需要缴纳保证金
