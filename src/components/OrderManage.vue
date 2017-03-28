@@ -2,12 +2,13 @@
   <div class="m-pmchannel-auction">
     <div class="module-wrap">
       <div class="auction-container square-col1">
+        <div>
+        <step v-model="step" background-color='#fbf9fe' gutter="20px">
+          <step-item :title="'done'"></step-item>
+          <step-item :title="'processing'"></step-item>
+          <step-item :title="'end'"></step-item>
+        </step>
         <div class="auction-wrapper" v-for="order in orderList">
-          <step v-model="step" background-color='#fbf9fe' gutter="20px">
-            <step-item :title="'done'"></step-item>
-            <step-item :title="'processing'"></step-item>
-            <step-item :title="'end'"></step-item>
-          </step>
           <a href="javascript:void(0);" class="item wait">
             <div class="img-wrapper">
               <img :src="order.goods.bannerUrl" style="width: 100%;">
@@ -37,6 +38,7 @@
             </div>
             <div class="line"></div>
           </a>
+        </div>
           <div class="btn_wrap">
             <x-button type="primary" @click.native="nextStep">next step</x-button>
           </div>
