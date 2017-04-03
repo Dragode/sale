@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%;">
-    <view-box ref="viewBox" body-padding-bottom="55px">
+    <view-box body-padding-bottom="55px">
       <div class="main-container">
         <section class="banner">
           <img :src="homeBannerUrl">
@@ -72,7 +72,6 @@
         .then(response=>{return response.body})
         .then(this.setUser);
 
-
       this.$http.get('/sessions/homeBanner')
         .then(response=>{return response.body})
         .then(this.setHomeBanner);
@@ -80,7 +79,6 @@
       this.$http.get('/sessions')
         .then(response=>{return response.body})
         .then(this.setSessionList);
-
     },
     methods: {
       setUser(user){

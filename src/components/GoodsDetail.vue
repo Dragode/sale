@@ -274,8 +274,8 @@
       chooseWhereToGo(user){
         this.user = user;
         if(user && !user.phoneNumber){
-          //先判断用户是否注册
-          this.$router.push({path:"/register/"+this.goods.id});
+          //用户未注册，获取用户微信昵称等信息，再重定向到注册页面
+          window.location.href = "/wx/redirectToWxOauthEx/index-register-" + this.goods.id;
         }else if("black_list" == user.role){
           //黑名单用户提示
           this.$vux.alert.show({
