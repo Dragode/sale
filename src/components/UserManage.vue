@@ -51,6 +51,10 @@
                 {
                   label: '当前角色',
                   value: roleDesc
+                },
+                {
+                  label: '微信昵称',
+                  value: user.nickname
                 }
               ];
 

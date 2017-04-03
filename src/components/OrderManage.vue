@@ -30,7 +30,12 @@
                     </div>
                     <div class="time-status">
                       <span class="date-desc wait">
-                        用户：{{order.user.phoneNumber}}
+                        微信：{{order.user.nickname}}
+                      </span>
+                      <br>
+                      <br>
+                      <span class="date-desc wait">
+                        手机：{{order.user.phoneNumber}}
                       </span>
                     </div>
                   </div>
