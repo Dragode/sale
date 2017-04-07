@@ -1,7 +1,6 @@
 <template>
-  <div style="height: 100%;">
-    <view-box body-padding-bottom="55px">
-      <div class="main-container">
+  <div style="height:100%;">
+    <view-box v-ref:view-box>
         <section class="banner">
           <img :src="homeBannerUrl">
         </section>
@@ -29,8 +28,6 @@
             </section>
           </section>
         </div>
-      </div>
-
 
       <tabbar slot="bottom">
         <tabbar-item selected link="/">
@@ -128,14 +125,8 @@
 <style>
   html {
     font-size: 37.5px !important;
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
   }
   body {
     font-size: 14.0625px;
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
   }
 </style>
