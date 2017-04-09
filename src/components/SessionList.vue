@@ -69,7 +69,7 @@
         .then(response=>{return response.body})
         .then(this.setUser);
 
-      this.$http.get('/sessions/homeBanner')
+      this.$http.get('/systemConfigs/configKey/HOME_BANNER_KEY')
         .then(response=>{return response.body})
         .then(this.setHomeBanner);
 

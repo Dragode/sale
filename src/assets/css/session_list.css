@@ -215,6 +215,7 @@ section.status {
   line-height: 34px;
   margin-top: 8px
 }
+/*useful*/
 
 section.countclass {
   white-space: nowrap;
@@ -444,10 +445,12 @@ section.tipsshow {
     margin-top: -14px
 }
 
+/*useful*/
 section.imgdivClass {
     margin-left: 1px;
     margin-right: 1px
 }
+/*useful*/
 
 .cmd {
     height: 124px;

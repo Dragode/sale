@@ -221,7 +221,7 @@
     },
     mounted:function(){
       this.$http.get("/goods/"+this.$route.params.goodsId).then(this.renderGoods)
-          .then(this.$http.get("/reminds").then(this.renderRemind));
+          .then(this.$http.get("/reminders/allRegisteredType").then(this.renderRemind));
     },
     methods: {
       renderGoods(response){
@@ -256,7 +256,7 @@
         }
 
         if (remindType != null) {
-          this.$http.post("/reminds/goodsId/" + this.$route.params.goodsId,remindType).then(this.registerRemindSuccess)
+          this.$http.post("/reminders/goodsId/" + this.$route.params.goodsId,remindType).then(this.registerRemindSuccess)
         }
       },
       registerRemindSuccess(){

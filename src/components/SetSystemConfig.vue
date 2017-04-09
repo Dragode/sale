@@ -82,8 +82,7 @@
         });
       },
       uploadPicturesToOurselfServer(res){
-        console.log("here")
-        this.$http.post('/sessions/homeBanner', res.serverId).then(
+        this.$http.post('/systemConfigs/homeBanner', res.serverId).then(
           function (response) {
             this.showUploadPictureLoading = false;
             if (response && response.body.id) {
