@@ -221,7 +221,7 @@
     },
     mounted:function(){
       this.$http.get("/goods/"+this.$route.params.goodsId).then(this.renderGoods)
-          .then(this.$http.get("/reminders/allRegisteredType").then(this.renderRemind));
+          .then(this.$http.get("/reminders/allRegisteredType/goodsId/"+this.$route.params.goodsId).then(this.renderRemind));
     },
     methods: {
       renderGoods(response){
@@ -260,7 +260,7 @@
         }
       },
       registerRemindSuccess(){
-        this.$http.get("/reminds").then(this.renderRemind);
+        this.$http.get("/reminders/allRegisteredType/goodsId/"+this.$route.params.goodsId).then(this.renderRemind);
         this.$vux.alert.show({
           title: '提示',
           content: '订阅提醒成功！'
@@ -282,7 +282,6 @@
             title: '错误',
             content: '请联系客服开通购买权限。客服联系方式：xxxxx'
           });
-          console.log("hei");
         }else if("normal" == user.role && 0 != this.goods.cashDeposit){
           //已注册的用户，判断是否要交保证金
           //普通用户拍卖需要保证金的商品需要缴纳保证金

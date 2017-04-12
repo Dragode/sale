@@ -120,6 +120,9 @@
 
 <script>
     import DateFormat from "../utils/DateFormat.js"
+    import { AlertPlugin } from 'vux'
+    import Vue from 'vue'
+    Vue.use(AlertPlugin);
     export default{
         data(){
             return{
@@ -160,13 +163,18 @@
           },
           confirmOk(){
             var url = "";
-            if("auction" == this.bidType){
-              url = "/goods/action/auction/goodsId/"+this.goods.id+"/price/"+this.bidPrice;
+            if("auction" == this.bidType || "buyout" == this.bidType){
+              url = "/auctions/goodsId/"+this.goods.id+"/price/"+this.bidPrice;
+              this.$http.post(url,{}).then(this.handleAuctionResponse);
             }
             if("proxy" == this.bidType){
-              url = "/goods/action/proxyAuction/goodsId/"+this.goods.id+"/price/"+this.bidPrice;
+              url = "/proxyBids";
+              var proxyBids = {
+                goodsId:this.goods.id,
+                maxPrice:this.bidPrice
+              };
+              this.$http.post(url,proxyBids).then(this.handleAuctionResponse);
             }
-            this.$http.post(url,{}).then(this.handleAuctionResponse)
             this.hideBidConfirm =true;
           },
           confirmCancel(){
@@ -174,28 +182,36 @@
           },
           handleAuctionResponse(response){
             var responseBody = response.body;
-            if(responseBody && responseBody.code == 0){
-              if('auction' == bidType){
+            var router = this.$router;
+            var goods = this.goods;
+            if(responseBody && 0 == responseBody.resultCode){
+              if('auction' == this.bidType){
                 this.tipTitle = "竞价成功";
                 this.tipContent = "您已竞价成功！您的出价为"+this.bidPrice+"元";
                 this.hideTip = false;
                 this.goods.currentPrice = this.bidPrice;
+                this.bidPrice = this.bidPrice + this.goods.bidIncrement;
               }
-              if('proxy' == bidType){
+              if('proxy' == this.bidType){
+                //TODO 设置多少代理价，根据响应报文而定
                 this.tipTitle = "设置代理价成功";
                 this.tipContent = "您已成功设置代理价！且您当前的出价为"+this.bidPrice+"元";
                 this.hideTip = false;
                 this.goods.currentPrice = this.goods.currentPrice + this.goods.bidIncrement;
+                this.bidPrice = this.bidPrice + this.goods.bidIncrement;
               }
-              if('buyout' == bidType){
-                this.tipTitle = "";
-                this.tipContent = "";
-                this.hideTip = false;
-                this.goods.currentPrice = this.goods.buyoutPrice;
+              if('buyout' == this.bidType){
+                this.$vux.alert.show({
+                  title: '拍卖成功',
+                  content: '一口价拍卖成功！',
+                  onHide () {
+                    router.push('/goodsDetail/'+goods.id);
+                  }
+                });
               }
             }
 
-            if(responseBody && responseBody.code == -1){
+            if(responseBody && 1001 == responseBody.resultCode){
               this.tipTitle = "竞价失败";
               this.tipContent = "对不起，您竞价失败！已经有人出了比您更高的价格，出价为{{currentPrice}}元";
               this.hideTip = false;
