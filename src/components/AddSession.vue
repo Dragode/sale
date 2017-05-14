@@ -99,7 +99,8 @@
         choosePictureToUpload(count){
           wx.chooseImage({
             count: count, // 默认9
-            sizeType: ['original'],
+            //sizeType: ['original'],//原图
+            sizeType: ['compressed'],//压缩图
             //sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
             success: this.uploadChoosedPicturesToWx
           });
