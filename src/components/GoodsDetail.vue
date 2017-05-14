@@ -54,6 +54,33 @@
           </div>
         </section>
 
+        <!--拍卖记录-->
+        <div v-if="bidRecords.length > 0">
+          <section class="pai-record">
+            <div class="header line">
+              <b class="icon pm-iconfont">录</b>
+              <span class="title">拍卖记录</span>
+              <span class="count"><b>{{bidRecords.length}}</b>条</span><!--几条-->
+              <!--<b class="right-anchor ">右</b>-->
+            </div>
+            <ul class="record-list" style="height: 1.0625rem;" v-for="bidRecord in bidRecords">
+              <li class="record-row status-lead">
+                <b class="icon">
+                  <b class="type-icon cell pm-iconfont">设</b>
+                </b>
+                <span class="nick cell">{{bidRecord.formattedUserPhoneNumber}}</span>
+                <!--<span class="status cell" v-if="index == 0">领先</span>-->
+                <span class="time cell">{{bidRecord.formattedBidTime}}</span>
+                <span class="user-price cell">
+                  <span class="price-comma">
+                  <i class="price-comma-rmb">￥</i>
+                  <em class="price-comma-price">{{bidRecord.price}}</em></span>
+                </span>
+              </li>
+            </ul>
+          </section>
+        </div>
+
         <!--相关参数-->
         <div class="rc-param rc-param-simple">
           <dl class="list">
@@ -128,9 +155,9 @@
                 </div>
 
                 <div class="help-tips">
-                  <div class="title">拍卖须知</div>
+                  <div class="title" style="color:red;">拍卖须知</div>
                   <div class="text">
-                    购买指导
+                    <span style="color:red;">购买指导</span>
                     <br>
                     【特别申明】本商城作品与实体店同步售卖，实体店如果同时售卖出去未及时下架。将以实体店为主。购买款将及时返还，敬请谅解。作品实体店售卖出去客服将第一时间下架商品。实体店售卖时间基本为早上8点一晚上19点。
                     <br>
@@ -144,7 +171,7 @@
                     <br>
                     13055255438黄先生，或加手机微信号。（上班时间：9:00-12:00；14:00-18:00，冬令时：13:30-17:30）
                     <br>
-                    关于邮费
+                    <span style="color:red;">关于邮费</span>
                     <br>
                     因系统无法设置邮费文字说明，故在此特别说明：
                     <br>
@@ -216,12 +243,14 @@
         countdownDesc:"03天10时18分43秒",
         formattedTime:"",
         registeredRemindTypes:[],
+        bidRecords:[],
         tipCashDeposit:false
       }
     },
     mounted:function(){
       this.$http.get("/goods/"+this.$route.params.goodsId).then(this.renderGoods)
-          .then(this.$http.get("/reminders/allRegisteredType/goodsId/"+this.$route.params.goodsId).then(this.renderRemind));
+          .then(this.$http.get("/reminders/allRegisteredType/goodsId/"+this.$route.params.goodsId).then(this.renderRemind))
+          .then(this.$http.get("/goods/"+this.$route.params.goodsId+"/records").then(this.renderBidRecord));
     },
     methods: {
       renderGoods(response){
@@ -240,6 +269,18 @@
       },
       renderRemind(response){
         this.registeredRemindTypes = response.body.items;
+      },
+      renderBidRecord(response){
+        var bidRecords = response.body.items;
+        for(var i=0;i<bidRecords.length;i++){
+          var bidRecord = bidRecords[i];
+          var bidTime = DateFormat.parseDate(bidRecord.bidTime,"yyyy-MM-dd hh:mm:ss");
+          bidRecord.formattedBidTime = DateFormat.format(bidTime, 'MM.dd HH:mm');
+          bidRecord.formattedUserPhoneNumber = bidRecord.userPhoneNumber.substring(0,4)+"****"+bidRecord.userPhoneNumber.substring(8,11);
+          this.bidRecords.push(bidRecord);
+        }
+        console.log(this.bidRecords);
+        console.log(this.bidRecords.length);
       },
       remind(){
         var remindType = null;
